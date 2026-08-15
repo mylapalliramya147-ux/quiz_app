@@ -2,12 +2,15 @@ package com.quizapp.quiz.controller;
 
 import com.quizapp.quiz.dto.AnswerRequest;
 import com.quizapp.quiz.dto.QuizQuestionResponse;
+import com.quizapp.quiz.dto.QuizResult;
 import com.quizapp.quiz.dto.QuizSessionResponse;
 import com.quizapp.quiz.model.GeneratedQuestion;
 import com.quizapp.quiz.model.QuizConfig;
 import com.quizapp.quiz.model.QuizSession;
 import com.quizapp.quiz.service.QuestionGenerator;
 import com.quizapp.quiz.service.QuizConfigService;
+import com.quizapp.quiz.service.QuizResultPersistenceService;
+import com.quizapp.quiz.service.QuizScoreService;
 import com.quizapp.quiz.service.QuizSessionService;
 
 import jakarta.validation.Valid;
@@ -28,13 +31,19 @@ public class QuizSessionController {
     private final QuizConfigService quizConfigService;
     private final QuestionGenerator questionGenerator;
     private final QuizSessionService quizSessionService;
+    private final QuizScoreService quizScoreService;
+    private final QuizResultPersistenceService quizResultPersistenceService;
 
     public QuizSessionController(QuizConfigService quizConfigService,
                                  QuestionGenerator questionGenerator,
-                                 QuizSessionService quizSessionService) {
+                                 QuizSessionService quizSessionService,
+                                 QuizScoreService quizScoreService,
+                                 QuizResultPersistenceService quizResultPersistenceService) {
         this.quizConfigService = quizConfigService;
         this.questionGenerator = questionGenerator;
         this.quizSessionService = quizSessionService;
+        this.quizScoreService = quizScoreService;
+        this.quizResultPersistenceService = quizResultPersistenceService;
     }
 
     @PostMapping
@@ -54,6 +63,14 @@ public class QuizSessionController {
                                       @Valid @RequestBody AnswerRequest request) {
         quizSessionService.submitAnswer(sessionId, request.questionId(), request.selectedAnswer());
         return request;
+    }
+
+    @PostMapping("/{sessionId}/finish")
+    public QuizResult finishSession(@PathVariable String sessionId) {
+        QuizSession session = quizSessionService.getSession(sessionId);
+        QuizConfig config = quizConfigService.getCurrent();
+        QuizResult result = quizScoreService.calculate(session);
+        return quizResultPersistenceService.save(result, config.topic(), config.difficulty());
     }
 
     private QuizSessionResponse toResponse(QuizSession session) {

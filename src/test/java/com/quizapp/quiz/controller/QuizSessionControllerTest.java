@@ -1,11 +1,14 @@
 package com.quizapp.quiz.controller;
 
+import com.quizapp.quiz.dto.QuizResult;
 import com.quizapp.quiz.model.Difficulty;
 import com.quizapp.quiz.model.GeneratedQuestion;
 import com.quizapp.quiz.model.QuizConfig;
 import com.quizapp.quiz.model.QuizSession;
 import com.quizapp.quiz.service.QuestionGenerator;
 import com.quizapp.quiz.service.QuizConfigService;
+import com.quizapp.quiz.service.QuizResultPersistenceService;
+import com.quizapp.quiz.service.QuizScoreService;
 import com.quizapp.quiz.service.QuizSessionService;
 
 import org.junit.jupiter.api.Test;
@@ -43,6 +46,12 @@ class QuizSessionControllerTest {
 
     @MockitoBean
     private QuizSessionService quizSessionService;
+
+    @MockitoBean
+    private QuizScoreService quizScoreService;
+
+    @MockitoBean
+    private QuizResultPersistenceService quizResultPersistenceService;
 
     @Test
     void shouldStartQuizUsingCurrentConfigAndHideCorrectAnswers() throws Exception {
@@ -151,5 +160,41 @@ class QuizSessionControllerTest {
                                 }
                                 """))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldFinishSessionAndSaveResult() throws Exception {
+        QuizConfig config = new QuizConfig("Java", Difficulty.MEDIUM, 1);
+        GeneratedQuestion question = new GeneratedQuestion("What is Java?",
+                List.of("Option A", "Option B", "Option C", "Option D"), "Option A");
+        QuizSession session = new QuizSession("session-1", List.of(question));
+        QuizResult result = new QuizResult("session-1", 1, 1, 1, 0, 1, 100.0);
+
+        when(quizConfigService.getCurrent()).thenReturn(config);
+        when(quizSessionService.getSession("session-1")).thenReturn(session);
+        when(quizScoreService.calculate(session)).thenReturn(result);
+        when(quizResultPersistenceService.save(result, "Java", Difficulty.MEDIUM)).thenReturn(result);
+
+        mockMvc.perform(post("/api/quiz/sessions/session-1/finish"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.sessionId").value("session-1"))
+                .andExpect(jsonPath("$.totalQuestions").value(1))
+                .andExpect(jsonPath("$.answeredQuestions").value(1))
+                .andExpect(jsonPath("$.correctAnswers").value(1))
+                .andExpect(jsonPath("$.wrongAnswers").value(0))
+                .andExpect(jsonPath("$.score").value(1))
+                .andExpect(jsonPath("$.percentage").value(100.0));
+
+        verify(quizScoreService).calculate(session);
+        verify(quizResultPersistenceService).save(result, "Java", Difficulty.MEDIUM);
+    }
+
+    @Test
+    void shouldReturn404WhenFinishingUnknownSession() throws Exception {
+        when(quizSessionService.getSession("unknown"))
+                .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Quiz session not found"));
+
+        mockMvc.perform(post("/api/quiz/sessions/unknown/finish"))
+                .andExpect(status().isNotFound());
     }
 }
