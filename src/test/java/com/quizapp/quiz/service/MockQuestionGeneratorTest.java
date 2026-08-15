@@ -1,7 +1,7 @@
 package com.quizapp.quiz.service;
 
 import com.quizapp.quiz.model.Difficulty;
-import com.quizapp.quiz.model.Question;
+import com.quizapp.quiz.model.GeneratedQuestion;
 import com.quizapp.quiz.model.QuizConfig;
 
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ class MockQuestionGeneratorTest {
     void generatesRequestedNumberOfQuestions() {
         QuizConfig config = new QuizConfig("Java", Difficulty.MEDIUM, 5);
 
-        List<Question> questions = generator.generate(config);
+        List<GeneratedQuestion> questions = generator.generate(config);
 
         assertEquals(5, questions.size());
     }
@@ -31,12 +31,12 @@ class MockQuestionGeneratorTest {
     void eachQuestionHasTextOptionsAndContainedCorrectAnswer() {
         QuizConfig config = new QuizConfig("Spring", Difficulty.HARD, 10);
 
-        List<Question> questions = generator.generate(config);
+        List<GeneratedQuestion> questions = generator.generate(config);
 
-        for (Question question : questions) {
-            assertNotNull(question.questionText());
-            assertFalse(question.questionText().isBlank());
-            assertTrue(question.questionText().contains("Spring"));
+        for (GeneratedQuestion question : questions) {
+            assertNotNull(question.question());
+            assertFalse(question.question().isBlank());
+            assertTrue(question.question().contains("Spring"));
             assertNotNull(question.options());
             assertEquals(4, question.options().size());
             assertTrue(question.options().contains(question.correctAnswer()));
@@ -45,9 +45,9 @@ class MockQuestionGeneratorTest {
 
     @Test
     void usesDifficultySpecificTemplates() {
-        List<Question> easy = generator.generate(new QuizConfig("Java", Difficulty.EASY, 3));
-        List<Question> hard = generator.generate(new QuizConfig("Java", Difficulty.HARD, 3));
+        List<GeneratedQuestion> easy = generator.generate(new QuizConfig("Java", Difficulty.EASY, 3));
+        List<GeneratedQuestion> hard = generator.generate(new QuizConfig("Java", Difficulty.HARD, 3));
 
-        assertNotEquals(easy.get(0).questionText(), hard.get(0).questionText());
+        assertNotEquals(easy.get(0).question(), hard.get(0).question());
     }
 }

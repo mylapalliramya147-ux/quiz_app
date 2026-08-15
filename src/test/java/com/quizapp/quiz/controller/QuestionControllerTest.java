@@ -1,7 +1,7 @@
 package com.quizapp.quiz.controller;
 
 import com.quizapp.quiz.model.Difficulty;
-import com.quizapp.quiz.model.Question;
+import com.quizapp.quiz.model.GeneratedQuestion;
 import com.quizapp.quiz.model.QuizConfig;
 import com.quizapp.quiz.service.QuestionGenerator;
 import com.quizapp.quiz.service.QuizConfigService;
@@ -37,9 +37,9 @@ class QuestionControllerTest {
     @Test
     void shouldGenerateQuestionsForStoredConfig() throws Exception {
         QuizConfig config = new QuizConfig("Java", Difficulty.MEDIUM, 2);
-        Question first = new Question("Which statement best describes Java?",
+        GeneratedQuestion first = new GeneratedQuestion("Which statement best describes Java?",
                 List.of("Option A", "Option B", "Option C", "Option D"), "Option A");
-        Question second = new Question("Why do people study Java?",
+        GeneratedQuestion second = new GeneratedQuestion("Why do people study Java?",
                 List.of("Option A", "Option B", "Option C", "Option D"), "Option C");
 
         when(quizConfigService.getCurrent()).thenReturn(config);
@@ -48,7 +48,7 @@ class QuestionControllerTest {
         mockMvc.perform(post("/api/quiz/generate"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].questionText").value("Which statement best describes Java?"))
+                .andExpect(jsonPath("$[0].question").value("Which statement best describes Java?"))
                 .andExpect(jsonPath("$[0].correctAnswer").value("Option A"));
 
         verify(questionGenerator).generate(config);

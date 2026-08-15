@@ -1,6 +1,6 @@
 package com.quizapp.quiz.controller;
 
-import com.quizapp.quiz.model.Question;
+import com.quizapp.quiz.model.GeneratedQuestion;
 import com.quizapp.quiz.model.QuizConfig;
 import com.quizapp.quiz.service.QuestionGenerator;
 import com.quizapp.quiz.service.QuizConfigService;
@@ -24,7 +24,7 @@ public class QuestionController {
     }
 
     @PostMapping
-    public List<Question> generateQuestions() {
+    public List<GeneratedQuestion> generateQuestions() {
         QuizConfig config = quizConfigService.getCurrent();
         return questionGenerator.generate(config);
     }

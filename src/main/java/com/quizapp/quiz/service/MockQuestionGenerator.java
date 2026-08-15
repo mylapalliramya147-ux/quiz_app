@@ -1,7 +1,7 @@
 package com.quizapp.quiz.service;
 
 import com.quizapp.quiz.model.Difficulty;
-import com.quizapp.quiz.model.Question;
+import com.quizapp.quiz.model.GeneratedQuestion;
 import com.quizapp.quiz.model.QuizConfig;
 
 import org.springframework.stereotype.Service;
@@ -77,20 +77,20 @@ public class MockQuestionGenerator implements QuestionGenerator {
     );
 
     @Override
-    public List<Question> generate(QuizConfig config) {
+    public List<GeneratedQuestion> generate(QuizConfig config) {
         return IntStream.range(0, config.numQuestions())
                 .mapToObj(index -> buildQuestion(config, index))
                 .toList();
     }
 
-    private Question buildQuestion(QuizConfig config, int index) {
+    private GeneratedQuestion buildQuestion(QuizConfig config, int index) {
         List<Template> templates = TEMPLATES.get(config.difficulty());
         Template template = templates.get(index % templates.size());
         String questionText = fill(template.stem(), config.topic());
         List<String> options = template.options().stream()
                 .map(option -> fill(option, config.topic()))
                 .toList();
-        return new Question(questionText, options, options.get(template.correctIndex()));
+        return new GeneratedQuestion(questionText, options, options.get(template.correctIndex()));
     }
 
     private static String fill(String text, String topic) {

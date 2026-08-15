@@ -48,7 +48,7 @@ class QuizConfigControllerTest {
     }
 
     @Test
-    void shouldRejectNonPositiveQuestionCount() throws Exception {
+    void shouldRejectZeroQuestionCount() throws Exception {
         mockMvc.perform(post("/api/quiz/config")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -56,6 +56,70 @@ class QuizConfigControllerTest {
                                   "topic": "Java",
                                   "difficulty": "EASY",
                                   "numQuestions": 0
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldRejectNegativeQuestionCount() throws Exception {
+        mockMvc.perform(post("/api/quiz/config")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "topic": "Java",
+                                  "difficulty": "EASY",
+                                  "numQuestions": -1
+                                }
+                                """))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldAcceptOneQuestion() throws Exception {
+        when(quizConfigService.save(any(QuizConfig.class)))
+                .thenReturn(new QuizConfig("Java", Difficulty.EASY, 1));
+
+        mockMvc.perform(post("/api/quiz/config")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "topic": "Java",
+                                  "difficulty": "EASY",
+                                  "numQuestions": 1
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.numQuestions").value(1));
+    }
+
+    @Test
+    void shouldAcceptTwentyQuestions() throws Exception {
+        when(quizConfigService.save(any(QuizConfig.class)))
+                .thenReturn(new QuizConfig("Java", Difficulty.MEDIUM, 20));
+
+        mockMvc.perform(post("/api/quiz/config")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "topic": "Java",
+                                  "difficulty": "MEDIUM",
+                                  "numQuestions": 20
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.numQuestions").value(20));
+    }
+
+    @Test
+    void shouldRejectQuestionCountAboveTwenty() throws Exception {
+        mockMvc.perform(post("/api/quiz/config")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "topic": "Java",
+                                  "difficulty": "HARD",
+                                  "numQuestions": 21
                                 }
                                 """))
                 .andExpect(status().isBadRequest());

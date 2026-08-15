@@ -15,8 +15,14 @@ Spring Boot 4.1.0 / Java 21 / Maven project (single module, no CI). Runs only on
 ## API flow (in-memory state, no persistence)
 - Config is stored in a `volatile` field in `QuizConfigService` — lost on restart. `POST /api/quiz/generate` returns **404** until a config has been set.
 - `POST /api/quiz/config` body: `{"topic": "...", "difficulty": "EASY|MEDIUM|HARD", "numQuestions": n}`. `topic` is `@NotBlank`, `difficulty` is `@NotNull`, `numQuestions` is `@Min(1)` with **no upper bound** — guard against huge values.
-- `POST /api/quiz/generate` returns `List<Question>` **including `correctAnswer`** — this is asserted in the tests, so keep it unless the design changes.
+- `POST /api/quiz/generate` returns `List<GeneratedQuestion>` **including `correctAnswer`** — this is asserted in the tests, so keep it unless the design changes.
 - Request validation lives on the `QuizConfigRequest` record; invalid bodies return 400.
+
+## Quiz sessions (in-memory, no persistence)
+- `POST /api/quiz/sessions` starts a session from the current config, generates via `QuestionGenerator`, and returns `{sessionId, questions:[{id, question, options}]}`. The response DTO **strips `correctAnswer`** — assert `.doesNotExist()` when testing this.
+- `GET /api/quiz/sessions/{id}/questions` returns the sanitized questions; unknown session id → 404.
+- `POST /api/quiz/sessions/{id}/answers` body `{questionId, selectedAnswer}`. `questionId` is the 0-based index into the session's questions; `selectedAnswer` must be one of that question's options (else 400), negative/out-of-range id → 400, unknown session → 404. No score is computed or stored.
+- Sessions + answers live in `QuizSessionService` (`ConcurrentHashMap`), discarded on restart.
 
 ## Spring Boot 4 test conventions (differs from Boot 2/3 docs)
 - Use `@MockitoBean` from `org.springframework.test.context.bean.override.mockito.MockitoBean` — not `@MockBean`.
@@ -24,4 +30,4 @@ Spring Boot 4.1.0 / Java 21 / Maven project (single module, no CI). Runs only on
 
 ## Question generation
 - `QuestionGenerator` is implemented only by `MockQuestionGenerator` (no real question source). It fills `%s` template placeholders with the config `topic`, cycling 3 templates per `Difficulty`. Adding a `Difficulty` value requires adding a `TEMPLATES` entry or `buildQuestion` NPEs.
-- Lombok is declared in the pom but unused; models are plain records.
+- Lombok is declared in the pom but unused; `QuizConfig` and `GeneratedQuestion` are plain records, but `QuizSession` is a mutable in-memory class holding the session's questions and submitted answers.
