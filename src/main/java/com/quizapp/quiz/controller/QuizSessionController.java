@@ -20,11 +20,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.stream.IntStream;
 
 @RestController
+@Tag(name="Quiz Session Management", description="Endpoints for managing quiz sessions, submitting answers, and retrieving results")
 @RequestMapping("/api/quiz/sessions")
 public class QuizSessionController {
 
@@ -61,7 +62,7 @@ public class QuizSessionController {
     @PostMapping("/{sessionId}/answers")
     public AnswerRequest submitAnswer(@PathVariable String sessionId,
                                       @Valid @RequestBody AnswerRequest request) {
-        quizSessionService.submitAnswer(sessionId, request.questionId(), request.selectedAnswer());
+        quizSessionService.submitAnswer(sessionId, request.questionId() - 1, request.selectedAnswer());
         return request;
     }
 
@@ -82,6 +83,6 @@ public class QuizSessionController {
 
     private QuizQuestionResponse toQuestionResponse(List<GeneratedQuestion> questions, int index) {
         GeneratedQuestion question = questions.get(index);
-        return new QuizQuestionResponse(index, question.question(), question.options());
+        return new QuizQuestionResponse(index + 1, question.question(), question.options());
     }
 }

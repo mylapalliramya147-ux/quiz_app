@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
 public record AnswerRequest(
-        @Min(value = 0, message = "Question id must not be negative")
+        @Min(value = 1, message = "Question id must be at least 1")
         int questionId,
 
         @NotBlank(message = "Selected answer must not be blank")

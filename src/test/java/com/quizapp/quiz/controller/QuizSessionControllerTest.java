@@ -68,7 +68,7 @@ class QuizSessionControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.sessionId").value("session-1"))
                 .andExpect(jsonPath("$.questions.length()").value(1))
-                .andExpect(jsonPath("$.questions[0].id").value(0))
+                .andExpect(jsonPath("$.questions[0].id").value(1))
                 .andExpect(jsonPath("$.questions[0].question").value("Which statement best describes Java?"))
                 .andExpect(jsonPath("$.questions[0].options[0]").value("Option A"))
                 .andExpect(jsonPath("$.questions[0].correctAnswer").doesNotExist());
@@ -97,12 +97,12 @@ class QuizSessionControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
-                                  "questionId": 0,
+                                  "questionId": 1,
                                   "selectedAnswer": "Option A"
                                 }
                                 """))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.questionId").value(0))
+                .andExpect(jsonPath("$.questionId").value(1))
                 .andExpect(jsonPath("$.selectedAnswer").value("Option A"));
 
         verify(quizSessionService).submitAnswer("session-1", 0, "Option A");
@@ -120,7 +120,7 @@ class QuizSessionControllerTest {
     @Test
     void shouldReturn400ForInvalidQuestionId() throws Exception {
         doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid question id"))
-                .when(quizSessionService).submitAnswer(eq("session-1"), eq(99), anyString());
+                .when(quizSessionService).submitAnswer(eq("session-1"), eq(98), anyString());
 
         mockMvc.perform(post("/api/quiz/sessions/session-1/answers")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -142,7 +142,7 @@ class QuizSessionControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
-                                  "questionId": 0,
+                                  "questionId": 1,
                                   "selectedAnswer": "Not an option"
                                 }
                                 """))
@@ -155,7 +155,7 @@ class QuizSessionControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
-                                  "questionId": 0,
+                                  "questionId": 1,
                                   "selectedAnswer": ""
                                 }
                                 """))

@@ -8,10 +8,11 @@ import com.quizapp.quiz.service.QuizConfigService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 
 @RestController
+@Tag(name="Question Generation", description="Endpoints for generating quiz questions based on the current configuration")
 @RequestMapping("/api/quiz/generate")
 public class QuestionController {
 
