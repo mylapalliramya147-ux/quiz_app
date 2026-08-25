@@ -29,8 +29,8 @@
   --transition-slow: 400ms ease;
   --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
   --font-mono: 'Cascadia Code', 'Fira Code', monospace;
-  --max-width: 480px;
-  --header-height: 56px;
+  --max-width: 560px;
+  --header-height: 60px;
 }
 
 /* ===========================
@@ -48,6 +48,7 @@ html {
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -88,8 +89,8 @@ body {
   max-width: var(--max-width);
   margin: 0 auto;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
 }
 
 .header-title {
@@ -99,12 +100,11 @@ body {
 }
 
 .header-progress {
-  flex: 1;
-  max-width: 200px;
+  width: 200px;
   height: 4px;
   background: rgba(255, 255, 255, 0.25);
   border-radius: 2px;
-  margin-left: 16px;
+  margin-top: 4px;
   overflow: hidden;
 }
 
@@ -233,6 +233,8 @@ body {
   transition: all var(--transition-fast);
   text-decoration: none;
   line-height: 1.4;
+  min-height: 52px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn:disabled {
@@ -322,7 +324,7 @@ body {
    =========================== */
 .flip-card {
   perspective: 800px;
-  height: 180px;
+  min-height: 180px;
   cursor: pointer;
 }
 
@@ -352,6 +354,7 @@ body {
   padding: 20px 16px;
   border: 2px solid transparent;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  overflow: hidden;
 }
 
 .flip-card-front {
@@ -412,6 +415,7 @@ body {
   transition: all var(--transition-fast);
   box-shadow: var(--shadow-sm);
   text-align: center;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .select-card:hover {
@@ -467,6 +471,8 @@ body {
   line-height: 1.5;
   color: var(--color-text);
   margin-bottom: 24px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .answer-options {
@@ -490,6 +496,8 @@ body {
   font-size: 0.95rem;
   color: var(--color-text);
   text-align: left;
+  min-height: 52px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .answer-option:hover {
@@ -666,6 +674,8 @@ body {
   margin-bottom: 12px;
   box-shadow: var(--shadow-sm);
   text-align: left;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .review-question-number {
@@ -709,6 +719,7 @@ body {
 .review-value {
   color: var(--color-text-secondary);
   line-height: 1.4;
+  word-break: break-word;
 }
 
 .review-perfect {
@@ -786,6 +797,8 @@ body {
   color: var(--color-text);
   animation: toastIn 0.3s ease, toastOut 0.3s ease 4.7s forwards;
   pointer-events: auto;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 @keyframes toastIn {
@@ -799,29 +812,180 @@ body {
 }
 
 /* ===========================
-   Responsive
+   Responsive — Small screens
    =========================== */
-@media (min-width: 600px) {
-  .card-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .card-grid-3 {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  .flip-card {
-    height: 200px;
-  }
-}
-
 @media (max-width: 360px) {
+  :root {
+    --header-height: 56px;
+  }
+
+  .page-container {
+    padding: 20px 12px;
+  }
+
   .page-title {
     font-size: 1.5rem;
   }
+
+  .page-subtitle {
+    margin-bottom: 20px;
+  }
+
   .question-text {
     font-size: 1.05rem;
   }
+
   .flip-card {
-    height: 160px;
+    min-height: 150px;
+  }
+
+  .flip-card-front,
+  .flip-card-back {
+    padding: 14px 10px;
+  }
+
+  .flip-card-icon {
+    font-size: 1.8rem;
+    margin-bottom: 6px;
+  }
+
+  .flip-card-label {
+    font-size: 0.85rem;
+  }
+
+  .flip-card-back .flip-card-desc {
+    font-size: 0.7rem;
+    margin-top: 4px;
+  }
+
+  .select-card {
+    padding: 14px;
+  }
+
+  .select-card-icon {
+    font-size: 1.4rem;
+    margin-bottom: 4px;
+  }
+
+  .select-card-label {
+    font-size: 0.9rem;
+  }
+
+  .question-card {
+    padding: 20px 16px;
+  }
+
+  .answer-option {
+    padding: 12px 14px;
+    gap: 10px;
+  }
+
+  .answer-option-letter {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
+
+  .result-card {
+    padding: 24px 16px;
+  }
+
+  .result-score-ring {
+    width: 120px;
+    height: 120px;
+  }
+
+  .result-score-percent {
+    font-size: 1.75rem;
+  }
+
+  .result-stats {
+    gap: 8px;
+  }
+
+  .result-stat {
+    padding: 10px 4px;
+  }
+
+  .result-stat-value {
+    font-size: 1.1rem;
+  }
+
+  .result-stat-label {
+    font-size: 0.65rem;
+  }
+
+  .review-card {
+    padding: 14px 16px;
+  }
+
+  .review-detail {
+    flex-direction: column;
+    gap: 2px;
+    font-size: 0.85rem;
+  }
+}
+
+/* ===========================
+   Responsive — Tablets
+   =========================== */
+@media (min-width: 600px) {
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .card-grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .flip-card {
+    min-height: 200px;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .question-card {
+    padding: 32px 28px;
+  }
+
+  .answer-option {
+    padding: 16px 20px;
+  }
+
+  .result-card {
+    padding: 36px 28px;
+  }
+}
+
+/* ===========================
+   Responsive — Desktops
+   =========================== */
+@media (min-width: 900px) {
+  .card-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .card-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .flip-card {
+    min-height: 220px;
+  }
+
+  .page-title {
+    font-size: 2.1rem;
+  }
+
+  .question-text {
+    font-size: 1.2rem;
+  }
+
+  .review-question-text {
+    font-size: 1rem;
   }
 }
 
