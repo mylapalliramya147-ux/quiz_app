@@ -2,24 +2,24 @@
    CSS Custom Properties
    =========================== */
 :root {
-  --color-primary: #6C5CE7;
-  --color-primary-dark: #5A4BD1;
-  --color-primary-light: #A29BFE;
-  --color-primary-bg: #F0EEFF;
-  --color-secondary: #00CEC9;
-  --color-success: #00B894;
-  --color-warning: #FDCB6E;
-  --color-danger: #E17055;
-  --color-bg: #F8F9FE;
+  --color-primary: #4A148C;
+  --color-primary-dark: #38006B;
+  --color-primary-light: #7C43BD;
+  --color-primary-bg: #F3E5F5;
+  --color-secondary: #536DFE;
+  --color-success: #00C853;
+  --color-warning: #FFD740;
+  --color-danger: #FF5252;
+  --color-bg: #FAFAFE;
   --color-surface: #FFFFFF;
-  --color-text: #2D3436;
-  --color-text-secondary: #636E72;
-  --color-text-muted: #B2BEC3;
-  --color-border: #E8E8F0;
-  --shadow-sm: 0 2px 8px rgba(108, 92, 231, 0.08);
-  --shadow-md: 0 4px 16px rgba(108, 92, 231, 0.12);
-  --shadow-lg: 0 8px 32px rgba(108, 92, 231, 0.16);
-  --shadow-xl: 0 12px 48px rgba(108, 92, 231, 0.20);
+  --color-text: #212121;
+  --color-text-secondary: #616161;
+  --color-text-muted: #BDBDBD;
+  --color-border: #E1D9F0;
+  --shadow-sm: 0 2px 8px rgba(74, 20, 140, 0.08);
+  --shadow-md: 0 4px 16px rgba(74, 20, 140, 0.12);
+  --shadow-lg: 0 8px 32px rgba(74, 20, 140, 0.16);
+  --shadow-xl: 0 12px 48px rgba(74, 20, 140, 0.20);
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
@@ -74,13 +74,13 @@ body {
   left: 0;
   right: 0;
   height: var(--header-height);
-  background: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  background: var(--color-primary);
+  border-bottom: none;
   z-index: 100;
   display: flex;
   align-items: center;
   padding: 0 20px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
 }
 
 .header-inner {
@@ -95,14 +95,14 @@ body {
 .header-title {
   font-weight: 700;
   font-size: 1.1rem;
-  color: var(--color-primary);
+  color: #FFFFFF;
 }
 
 .header-progress {
   flex: 1;
   max-width: 200px;
   height: 4px;
-  background: var(--color-border);
+  background: rgba(255, 255, 255, 0.25);
   border-radius: 2px;
   margin-left: 16px;
   overflow: hidden;
@@ -110,7 +110,7 @@ body {
 
 .progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+  background: linear-gradient(90deg, #BB86FC, var(--color-secondary));
   border-radius: 2px;
   transition: width var(--transition-slow);
   width: 0%;
@@ -160,7 +160,7 @@ body {
 .page-title {
   font-size: 1.75rem;
   font-weight: 800;
-  color: var(--color-text);
+  color: var(--color-primary);
   margin-bottom: 4px;
   letter-spacing: -0.02em;
 }
@@ -243,11 +243,11 @@ body {
 .btn-primary {
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
   color: white;
-  box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+  box-shadow: 0 4px 12px rgba(74, 20, 140, 0.35);
 }
 
 .btn-primary:hover:not(:disabled) {
-  box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+  box-shadow: 0 6px 20px rgba(74, 20, 140, 0.45);
   transform: translateY(-1px);
 }
 
@@ -276,13 +276,13 @@ body {
 }
 
 .btn-success {
-  background: linear-gradient(135deg, var(--color-success), #00A383);
+  background: linear-gradient(135deg, var(--color-success), #00A844);
   color: white;
-  box-shadow: 0 4px 12px rgba(0, 184, 148, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 200, 83, 0.3);
 }
 
 .btn-success:hover:not(:disabled) {
-  box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 200, 83, 0.4);
   transform: translateY(-1px);
 }
 
@@ -359,8 +359,13 @@ body {
   box-shadow: var(--shadow-md);
 }
 
+.flip-card.flipped .flip-card-front {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(74, 20, 140, 0.15);
+}
+
 .flip-card-back {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  background: linear-gradient(135deg, var(--color-primary), #6A1B9A);
   color: white;
   transform: rotateY(180deg);
   box-shadow: var(--shadow-lg);
@@ -379,6 +384,10 @@ body {
   color: var(--color-text);
 }
 
+.flip-card.flipped .flip-card-front .flip-card-label {
+  color: var(--color-primary);
+}
+
 .flip-card-back .flip-card-label {
   color: white;
 }
@@ -389,24 +398,6 @@ body {
   text-align: center;
   margin-top: 6px;
   line-height: 1.4;
-}
-
-.flip-card-back .flip-card-action {
-  margin-top: 12px;
-  padding: 6px 20px;
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: var(--radius-sm);
-  color: white;
-  font-weight: 600;
-  font-size: 0.8rem;
-  font-family: var(--font-sans);
-  cursor: pointer;
-  transition: background var(--transition-fast);
-}
-
-.flip-card-back .flip-card-action:hover {
-  background: rgba(255, 255, 255, 0.3);
 }
 
 /* ===========================
@@ -432,7 +423,7 @@ body {
 .select-card.selected {
   border-color: var(--color-primary);
   background: var(--color-primary-bg);
-  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+  box-shadow: 0 0 0 3px rgba(74, 20, 140, 0.15);
 }
 
 .select-card-icon {
@@ -650,6 +641,93 @@ body {
 
 .result-stat.wrong .result-stat-value {
   color: var(--color-danger);
+}
+
+/* ===========================
+   Wrong Answer Review
+   =========================== */
+.review-section {
+  margin-top: 24px;
+}
+
+.review-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.review-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-sm);
+  text-align: left;
+}
+
+.review-question-number {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.review-question-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.review-detail {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+}
+
+.review-label {
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.review-label.your-answer {
+  color: var(--color-danger);
+}
+
+.review-label.correct-answer {
+  color: var(--color-success);
+}
+
+.review-value {
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.review-perfect {
+  text-align: center;
+  padding: 32px 16px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.review-perfect-icon {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+}
+
+.review-perfect-text {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--color-success);
 }
 
 /* ===========================

@@ -26,6 +26,9 @@ async function initQuiz() {
   state.questions = session.questions;
   state.currentQuestion = 0;
   state.answers = {};
+  if (session.fallback) {
+    showToast('AI questions are temporarily unavailable. Using built-in questions.');
+  }
   renderCurrentQuestion();
 }
 

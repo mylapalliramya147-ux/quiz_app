@@ -10,11 +10,41 @@ export function renderResult(container) {
   const pct = Math.round(r.percentage);
   const circumference = 2 * Math.PI * 60;
   const offset = circumference - (pct / 100) * circumference;
+  const wrongList = r.wrongAnswersList || [];
 
   let message = 'Keep practicing!';
   if (pct >= 90) message = 'Outstanding! You\'re a master!';
   else if (pct >= 70) message = 'Great job! Well done!';
   else if (pct >= 50) message = 'Not bad! Room to improve.';
+
+  const reviewHtml = wrongList.length > 0
+    ? `
+      <div class="review-section">
+        <h2 class="review-title">Wrong Answers Review</h2>
+        ${wrongList.map(w => `
+          <div class="review-card">
+            <div class="review-question-number">Question ${w.questionNumber}</div>
+            <div class="review-question-text">${escapeHtml(w.question)}</div>
+            <div class="review-detail">
+              <span class="review-label your-answer">Your answer:</span>
+              <span class="review-value">${escapeHtml(w.yourAnswer)}</span>
+            </div>
+            <div class="review-detail">
+              <span class="review-label correct-answer">Correct answer:</span>
+              <span class="review-value">${escapeHtml(w.correctAnswer)}</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `
+    : `
+      <div class="review-section">
+        <div class="review-perfect">
+          <div class="review-perfect-icon">&#x2705;</div>
+          <div class="review-perfect-text">Perfect score! All answers correct!</div>
+        </div>
+      </div>
+    `;
 
   container.innerHTML = `
     <div class="page">
@@ -46,6 +76,7 @@ export function renderResult(container) {
           </div>
         </div>
       </div>
+      ${reviewHtml}
       <div class="btn-group">
         <button id="btn-play-again" class="btn btn-primary">Play Again</button>
         <button id="btn-home" class="btn btn-ghost">Home</button>

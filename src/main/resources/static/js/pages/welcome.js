@@ -4,7 +4,7 @@ export function renderWelcome(container) {
   container.innerHTML = `
     <div class="page">
       <div class="text-center" style="margin-bottom: 32px;">
-        <div style="font-size: 3rem; margin-bottom: 8px;">🧠</div>
+        <div style="font-size: 3rem; margin-bottom: 8px;">&#x1F9E0;</div>
         <h1 class="page-title">Welcome to Quiz</h1>
         <p class="page-subtitle">Test your knowledge across various topics</p>
       </div>

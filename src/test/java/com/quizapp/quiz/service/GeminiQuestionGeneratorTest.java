@@ -45,7 +45,7 @@ class GeminiQuestionGeneratorTest {
         response = mock(GenerateContentResponse.class);
         when(models.generateContent(any(String.class), any(String.class), any(GenerateContentConfig.class)))
                 .thenReturn(response);
-        generator = new GeminiQuestionGenerator(provider(models), MODEL);
+        generator = new GeminiQuestionGenerator(provider(models), MODEL, false);
     }
 
     @Test
@@ -100,7 +100,7 @@ class GeminiQuestionGeneratorTest {
     @Test
     void throwsClearErrorWhenApiKeyNotConfigured() {
         ObjectProvider<Models> emptyProvider = provider(null);
-        GeminiQuestionGenerator noKeyGenerator = new GeminiQuestionGenerator(emptyProvider, MODEL);
+        GeminiQuestionGenerator noKeyGenerator = new GeminiQuestionGenerator(emptyProvider, MODEL, false);
 
         IllegalStateException exception = assertThrows(IllegalStateException.class,
                 () -> noKeyGenerator.generate(new QuizConfig("Java", Difficulty.MEDIUM, 2)));
@@ -173,6 +173,28 @@ class GeminiQuestionGeneratorTest {
                 () -> generator.generate(new QuizConfig("Java", Difficulty.MEDIUM, 1)));
 
         assertEquals("Gemini question generation failed", exception.getMessage());
+    }
+
+    @Test
+    void throwsWhenForceFallbackIsEnabled() {
+        GeminiQuestionGenerator forceFallbackGenerator =
+                new GeminiQuestionGenerator(provider(models), MODEL, true);
+
+        IllegalStateException exception = assertThrows(IllegalStateException.class,
+                () -> forceFallbackGenerator.generate(new QuizConfig("Java", Difficulty.MEDIUM, 2)));
+
+        assertTrue(exception.getMessage().contains("force-fallback"));
+    }
+
+    @Test
+    void forceFallbackDoesNotCallGeminiApi() {
+        GeminiQuestionGenerator forceFallbackGenerator =
+                new GeminiQuestionGenerator(provider(models), MODEL, true);
+
+        assertThrows(IllegalStateException.class,
+                () -> forceFallbackGenerator.generate(new QuizConfig("Java", Difficulty.MEDIUM, 2)));
+
+        org.mockito.Mockito.verifyNoInteractions(models);
     }
 
     private static ObjectProvider<Models> provider(Models models) {

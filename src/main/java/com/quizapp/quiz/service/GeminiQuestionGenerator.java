@@ -26,18 +26,27 @@ public class GeminiQuestionGenerator implements QuestionGenerator {
     private static final String MISSING_KEY_MESSAGE =
             "GEMINI_API_KEY environment variable is not set. Set it to enable AI question generation.";
 
+    private static final String FORCE_FALLBACK_MESSAGE =
+            "Gemini AI generation is disabled (app.quiz.ai.force-fallback=true)";
+
     private final ObjectProvider<Models> modelsProvider;
     private final String modelName;
+    private final boolean forceFallback;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public GeminiQuestionGenerator(ObjectProvider<Models> modelsProvider,
-                                   @Value("${app.quiz.ai.model:gemini-2.5-flash}") String modelName) {
+                                   @Value("${app.quiz.ai.model:gemini-2.5-flash}") String modelName,
+                                   @Value("${app.quiz.ai.force-fallback:false}") boolean forceFallback) {
         this.modelsProvider = modelsProvider;
         this.modelName = modelName;
+        this.forceFallback = forceFallback;
     }
 
     @Override
     public List<GeneratedQuestion> generate(QuizConfig config) {
+        if (forceFallback) {
+            throw new IllegalStateException(FORCE_FALLBACK_MESSAGE);
+        }
         Models models = modelsProvider.getIfAvailable();
         if (models == null) {
             throw new IllegalStateException(MISSING_KEY_MESSAGE);

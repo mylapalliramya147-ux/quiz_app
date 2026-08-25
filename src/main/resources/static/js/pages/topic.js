@@ -1,10 +1,14 @@
 import state from '../state.js';
 
 export function renderTopic(container) {
+  const welcomeText = state.playerName
+    ? `Welcome, ${escapeHtml(state.playerName)}!`
+    : 'Choose a Topic';
+
   container.innerHTML = `
     <div class="page">
-      <h1 class="page-title">Choose a Topic</h1>
-      <p class="page-subtitle">Tap a card to flip it and select</p>
+      <h1 class="page-title">${welcomeText}</h1>
+      <p class="page-subtitle">Tap a card to select a topic</p>
       <div class="card-grid">
         ${state.topics.map(t => `
           <div class="flip-card" data-topic-id="${t.id}" tabindex="0" role="button" aria-label="${t.name}">
@@ -16,7 +20,6 @@ export function renderTopic(container) {
               <div class="flip-card-back">
                 <div class="flip-card-label">${t.name}</div>
                 <div class="flip-card-desc">${t.desc}</div>
-                <button class="flip-card-action" data-select="${t.id}">Select</button>
               </div>
             </div>
           </div>
@@ -36,11 +39,7 @@ export function renderTopic(container) {
   function syncSelection() {
     cards.forEach(card => {
       const id = card.dataset.topicId;
-      if (id === state.topic) {
-        card.classList.add('flipped');
-      } else {
-        card.classList.remove('flipped');
-      }
+      card.classList.toggle('flipped', id === state.topic);
     });
     btnContinue.disabled = !state.topic;
   }
@@ -50,13 +49,8 @@ export function renderTopic(container) {
   cards.forEach(card => {
     const id = card.dataset.topicId;
 
-    card.addEventListener('click', (e) => {
-      if (e.target.closest('.flip-card-action')) return;
-      if (state.topic === id) {
-        state.topic = null;
-      } else {
-        state.topic = id;
-      }
+    card.addEventListener('click', () => {
+      state.topic = state.topic === id ? null : id;
       syncSelection();
     });
 
@@ -65,13 +59,6 @@ export function renderTopic(container) {
         e.preventDefault();
         card.click();
       }
-    });
-
-    const selectBtn = card.querySelector('.flip-card-action');
-    selectBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      state.topic = id;
-      syncSelection();
     });
   });
 
@@ -84,4 +71,10 @@ export function renderTopic(container) {
   btnBack.addEventListener('click', () => {
     window.location.hash = '#welcome';
   });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
 }
